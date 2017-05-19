@@ -27,12 +27,15 @@ class script_handler(object):
 		self.off_script = off_script
 
 	def on(self):
-		success = os.system(script_path.format(on_script))
+		success = os.system(script_handler.script_path.format(self.on_script))
 		return not success
 
 	def off(self):
 		if not self.off_script:
 			return False
 		else:
-			success = os.system(script_path.format(off_script))
+			success = os.system(script_handler.script_path.format(self.off_script))
 			return not success
+
+if __name__ == '__main__':
+	print(script_handler.script_path.format("test"))
