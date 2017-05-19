@@ -22,17 +22,17 @@ class script_handler(object):
 		off_script: string, name of the script executed with
 			the 'off' command located in script_path
 	'''
-    def __init__(self, on_script, off_script = None):
-        self.on_script = on_script
-        self.off_script = off_script
+	def __init__(self, on_script, off_script = None):
+		self.on_script = on_script
+		self.off_script = off_script
 
-    def on(self):
-        success = os.system(script_path.format(on_script))
-        return not success
+	def on(self):
+		success = os.system(script_path.format(on_script))
+		return not success
 
-    def off(self):
-        if not self.off_script:
+	def off(self):
+		if not self.off_script:
 			return False
 		else:
 			success = os.system(script_path.format(off_script))
-	        return not success
+			return not success
