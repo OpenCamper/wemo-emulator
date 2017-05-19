@@ -33,10 +33,12 @@ import socket
 import struct
 import sys
 import time
+import logging
 import urllib
 import uuid
 
-
+#~ logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
 
 # This XML is the minimum needed to define one of our virtual switches
 # to the Amazon Echo
@@ -121,7 +123,7 @@ class upnp_device(object):
 			except:
 				upnp_device.this_host_ip = '127.0.0.1'
 			del(temp_socket)
-			dbg("got local address of %s" % upnp_device.this_host_ip)
+			logging.debug("got local address of %s" % upnp_device.this_host_ip)
 		return upnp_device.this_host_ip
 		
 
@@ -172,7 +174,7 @@ class upnp_device(object):
 		return "unknown"
 		
 	def respond_to_search(self, destination, search_target):
-		dbg("Responding to search for %s" % self.get_name())
+		logging.debug("Responding to search for %s" % self.get_name())
 		date_str = email.utils.formatdate(timeval=None, localtime=False, usegmt=True)
 		location_url = self.root_url % {'ip_address' : self.ip_address, 'port' : self.port}
 		message = ("HTTP/1.1 200 OK\r\n"
@@ -211,14 +213,14 @@ class fauxmo(upnp_device):
 			self.action_handler = action_handler
 		else:
 			self.action_handler = self
-		dbg("FauxMo device '%s' ready on %s:%s" % (self.name, self.ip_address, self.port))
+		logging.debug("FauxMo device '%s' ready on %s:%s" % (self.name, self.ip_address, self.port))
 
 	def get_name(self):
 		return self.name
 
 	def handle_request(self, data, sender, socket):
 		if data.find('GET /setup.xml HTTP/1.1') == 0:
-			dbg("Responding to setup.xml for %s" % self.name)
+			logging.debug("Responding to setup.xml for %s" % self.name)
 			xml = SETUP_XML % {'device_name' : self.name, 'device_serial' : self.serial}
 			date_str = email.utils.formatdate(timeval=None, localtime=False, usegmt=True)
 			message = ("HTTP/1.1 200 OK\r\n"
@@ -236,15 +238,15 @@ class fauxmo(upnp_device):
 			success = False
 			if data.find('<BinaryState>1</BinaryState>') != -1:
 				# on
-				dbg("Responding to ON for %s" % self.name)
+				logging.debug("Responding to ON for %s" % self.name)
 				success = self.action_handler.on()
 			elif data.find('<BinaryState>0</BinaryState>') != -1:
 				# off
-				dbg("Responding to OFF for %s" % self.name)
+				logging.debug("Responding to OFF for %s" % self.name)
 				success = self.action_handler.off()
 			else:
-				dbg("Unknown Binary State request:")
-				dbg(data)
+				logging.debug("Unknown Binary State request:")
+				logging.debug(data)
 			if success:
 				# The echo is happy with the 200 status code and doesn't
 				# appear to care about the SOAP response body
@@ -262,7 +264,7 @@ class fauxmo(upnp_device):
 						   "%s" % (len(soap), date_str, soap))
 				socket.send(message)
 		else:
-			dbg(data)
+			logging.debug(data)
 
 	def on(self):
 		return False
@@ -301,20 +303,20 @@ class upnp_broadcast_responder(object):
 			try:
 				self.ssock.bind(('',self.port))
 			except Exception as e:
-				dbg("WARNING: Failed to bind %s:%d: %s" , (self.ip,self.port,e))
+				logging.debug("WARNING: Failed to bind %s:%d: %s" , (self.ip,self.port,e))
 				ok = False
 
 			try:
 				self.ssock.setsockopt(socket.IPPROTO_IP,socket.IP_ADD_MEMBERSHIP,self.mreq)
 			except Exception as e:
-				dbg('WARNING: Failed to join multicast group:',e)
+				logging.debug('WARNING: Failed to join multicast group:',e)
 				ok = False
 
 		except Exception as e:
-			dbg("Failed to initialize UPnP sockets:",e)
+			logging.debug("Failed to initialize UPnP sockets:",e)
 			return False
 		if ok:
-			dbg("Listening for UPnP broadcasts")
+			logging.debug("Listening for UPnP broadcasts")
 
 	def fileno(self):
 		return self.ssock.fileno()
@@ -344,12 +346,12 @@ class upnp_broadcast_responder(object):
 			else:
 				return False, False
 		except Exception as e:
-			dbg(e)
+			logging.debug(e)
 			return False, False
 
 	def add_device(self, device):
 		self.devices.append(device)
-		dbg("UPnP broadcast listener: new device registered")
+		logging.debug("UPnP broadcast listener: new device registered")
 
 
 # This is an example handler class. The fauxmo class expects handlers to be
