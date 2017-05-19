@@ -28,7 +28,8 @@ logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
 # list will be used.
 
 SCRIPTS = [
-	['test', handler.script_handler("test_script_on.sh", "test_script_off.sh")]
+	['test', handler.script_handler("test_script_on.sh", "test_script_off.sh")],
+	['cloud', handler.script_handler("remount.sh")]
 ]
 
 # Set up our singleton for polling the sockets for data ready
