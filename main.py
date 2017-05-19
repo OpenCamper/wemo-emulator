@@ -13,8 +13,8 @@ import logging
 import fauxmo
 import handler
 
-#~ logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
-logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
+#~ logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
 
 # List of scripts to run on the Raspberri pi.
 # Each entry is a list with the following elements:

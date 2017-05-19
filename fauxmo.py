@@ -37,8 +37,8 @@ import logging
 import urllib
 import uuid
 
-#~ logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
-logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
+#~ logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
 
 # This XML is the minimum needed to define one of our virtual switches
 # to the Amazon Echo
