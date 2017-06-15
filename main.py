@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python2
 
 '''
  Max Kessler <max.e.kessler@gmail.com>
@@ -8,13 +8,17 @@
 '''
 
 import sys
+import os
 import time
 import logging
 import fauxmo
 import handler
 
+from cmus_remote_py.cmus_remote_client_py2 import send_cmus_cmd
+
 logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
 #~ logging.basicConfig(stream=sys.stdout,level=logging.DEBUG)
+logging.debug("\nStart program\n")
 
 # List of scripts to run on the Raspberri pi.
 # Each entry is a list with the following elements:
@@ -27,10 +31,19 @@ logging.basicConfig(filename='wemo.log',level=logging.DEBUG)
 # 16 switches it can control. Only the first 16 elements of the FAUXMOS
 # list will be used.
 
-SCRIPTS = [
-	['test', handler.script_handler("test_script_on.sh", "test_script_off.sh")],
-	['cloud', handler.script_handler("remount.sh")]
-]
+try:
+	SCRIPTS = [
+		['test', handler.script_handler("test_script_on.sh", "test_script_off.sh")],
+		['cloud', handler.script_handler("remount.sh")],
+		['linie', handler.fct_handler(send_cmus_cmd, ['next', '192.168.0.11', 65001], send_cmus_cmd, ['prev', '192.168.0.11', 65001])],
+		['desktop', handler.fct_handler(send_cmus_cmd, ['play', '192.168.0.11', 65001], send_cmus_cmd, ['pause', '192.168.0.11', 65001])]
+	]
+	
+	logging.debug("Scripts with handlers initialized.")
+except Exception as e:
+	logging.debug("Initialization of scripts failed.")
+	logging.critical(e)
+	
 
 # Set up our singleton for polling the sockets for data ready
 p = fauxmo.poller()
@@ -53,14 +66,14 @@ for one_faux in SCRIPTS:
 logging.debug("Entering main loop\n")
 
 while True:
-	try:
+	#~ try:
 		# Allow time for a ctrl-c to stop the process
-		#~ logging.debug("targets in the poller: {}".format(p.targets))
-		p.poll(100)
-		time.sleep(0.1)
-		#~ logging.debug("after first sleep.")
-		#~ print("hello!")
-		#~ time.sleep(1)
-	except Exception as e:
-		logging.critical(e)
-		break
+	p.poll(100)
+	time.sleep(0.1)
+	#~ except Exception as e:
+		#~ logging.debug("Main loop exception:")
+		#~ logging.debug("type: {}, args: {}".format(type(e), e.args))
+		#~ logging.critical(e)
+				
+		#~ break
+	

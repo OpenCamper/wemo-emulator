@@ -5,6 +5,6 @@
 
 TIME=$(date +%d/%m/%Y\ %H:%M:%S)
 FTIME=$(date +%d_%m_%Y_%H_%M_%S)
-FILE=on-${FTIME}.txt
+FILE=off-${FTIME}.txt
 
-echo "on test at $TIME" > ~/${FILE}
+echo "off test at $TIME" > ~/${FILE}
